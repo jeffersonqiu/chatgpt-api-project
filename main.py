@@ -1,56 +1,46 @@
-import os
-import typer
-import openai
 from dotenv import load_dotenv
-from typing import Optional
+import os
+import pandas as pd
+from llama_index.query_engine import PandasQueryEngine
+from prompts import new_prompt, instruction_str, context
+from note_engine import note_engine
+from llama_index.tools import QueryEngineTool, ToolMetadata
+from llama_index.agent import ReActAgent
+from llama_index.llms import OpenAI
+from pdf import jeff_resume_engine
 
 load_dotenv()
 
-openai.api_key = "<insert your api-key here>"
+# population_path = os.path.join("data", "population.csv")
+# population_df = pd.read_csv(population_path)
 
-app = typer.Typer()
+# population_query_engine = PandasQueryEngine(
+#     df=population_df, verbose=True, instruction_str=instruction_str
+# )
+# population_query_engine.update_prompts({"pandas_prompt": new_prompt})
 
-
-@app.command()
-def interactive_chat(
-    text: Optional[str] = typer.Option(None, "--text", "-t", help="Start with text"),
-    temperature: float = typer.Option(0.7, help="Control Randomness. Defaults to 0.7"),
-    max_tokens: int = typer.Option(
-        150, help="Control length of response. Defaults to 150"
+tools = [
+    note_engine,
+    # QueryEngineTool(
+    #     query_engine=population_query_engine,
+    #     metadata=ToolMetadata(
+    #         name="population_data",
+    #         description="this gives information at the world population and demographics",
+    #     ),
+    # ),
+    QueryEngineTool(
+        query_engine=jeff_resume_engine,
+        metadata=ToolMetadata(
+            name="jefferson_data",
+            description="this gives detailed information about Jefferson's CV",
+        ),
     ),
-    model: str = typer.Option(
-        "gpt-3.5-turbo", help="Control the model to use. Defaults to gpt-3.5-turbo"
-    ),
-):
-    """Interactive CLI tool to chat with ChatGPT."""
-    typer.echo(
-        "Starting interactive chat with ChatGPT. Type 'exit' to end the session."
-    )
+]
 
-    messages = []
+# llm = OpenAI(model="gpt-3.5-turbo-0613")
+llm = OpenAI(model="gpt-4-turbo-preview")
+agent = ReActAgent.from_tools(tools, llm=llm, verbose=True, context=context)
 
-    while True:
-        if text:
-            prompt = text
-            text = None
-        else:
-            prompt = typer.prompt("You")
-
-        messages.append({"role": "user", "content": prompt})
-        if prompt == "exit":
-            typer.echo("ChatGPT: Goodbye!")
-            break
-
-        response = openai.ChatCompletion.create(
-            model=model,
-            messages=messages,
-            max_tokens=max_tokens,
-            temperature=temperature,
-        )
-
-        typer.echo(f'ChatGPT: {response["choices"][0]["message"]["content"]}')
-        messages.append(response["choices"][0]["message"])
-
-
-if __name__ == "__main__":
-    app()
+while (prompt := input("Enter a prompt (q to quit): ")) != "q":
+    result = agent.query(prompt)
+    print(result)
