@@ -1,4 +1,4 @@
-# Virtual Environment
-chatgpt_api_project/
-
-.DS_Store
+python-env
+__pycache__
+/indices
+.env
