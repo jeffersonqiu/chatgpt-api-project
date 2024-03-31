@@ -2,3 +2,4 @@ python-env
 __pycache__
 /indices
 .env
+.DS_Store
