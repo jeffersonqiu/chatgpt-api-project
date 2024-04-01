@@ -2,21 +2,49 @@
 
 This project aims to explore the capability of LLM to explore internal information, leveraging llama_index library. This is a substantially more efficient method than fine-tuning or let alone retraining of the LLM model. 
 
-## Example
-Input: when jeff go to NTU?
-<br>:: Note the bad grammar, to challenge the model
+## Example 1: PDF reader
+![jeff_q](assets/jeff_q.png)
 
-Output: <br>
-*Thought: I need to use the jefferson_data tool to find out when Jefferson went to NTU.*<br>
-**Action**: jefferson_data<br>
-**Action Input**: {'input': 'NTU'}<br>
-**Observation**: Nanyang Technological University
+## Example 2: CSV reader
+*Data provided in 'data' folder downloaded from Kaggle ([here](https://www.kaggle.com/datasets/arashnic/hr-analytics-job-change-of-data-scientists))*<br>
 
-*Thought: The observation indicates that NTU refers to Nanyang Technological University, but it doesn't provide the specific information about when Jefferson went to NTU. I need to refine my query to specifically ask for the year Jefferson attended NTU.*<br>
-**Action**: jefferson_data<br>
-**Action Input**: {'input': 'education'}<br>
-**Observation**: Bachelor of Mechanical Engineering with minor in Business Aug 2013 – May 2017 from Nanyang Technological University with CGPA 4.88/5.00 (Top 5% of cohort, 3 x Deans List)
+![ds_q](assets/ds_q.png)
 
-*Thought: I can answer without using any more tools.*<br>
-**Answer**: Jefferson attended Nanyang Technological University from August 2013 to May 2017, where he pursued a Bachelor of Mechanical Engineering with a minor in Business.
+# How to Use the ChatGPT API Project
 
+This guide will walk you through the steps to set up and run the ChatGPT API Project. Follow these steps to get started.
+
+## Step 1: Clone the Repository
+
+First, clone the repository to your local machine using the terminal.
+
+```bash
+git clone https://github.com/jeffersonqiu/chatgpt-api-project.git
+```
+
+## Step 2: Create a Virtual Environment and Install Dependencies
+
+Navigate to the project directory and create a virtual environment. Then, install the required dependencies.
+
+```bash
+cd chatgpt-api-project
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Step 3: Add Your OpenAI API Key
+
+To use the ChatGPT API, you need to add your own OpenAI API Key to the `.env` file. You can find your API key at [OpenAI Platform](https://platform.openai.com/api-keys).
+
+## Step 4: Run the Script
+
+With the setup complete, you can now run the script.
+
+```bash
+python3 main.py
+```
+
+## Step 5: [Optional] Add More Documents
+
+If you want to use more documents, you can add them for your own usage. Note that you will need to edit `main.py` to add your own engine. You will find further guidance in `main.py`.
