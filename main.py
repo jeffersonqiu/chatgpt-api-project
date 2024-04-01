@@ -1,33 +1,30 @@
-from dotenv import load_dotenv
 import os
-import pandas as pd
-from llama_index.query_engine import PandasQueryEngine
-from helper.prompts import new_prompt, instruction_str, context
+from dotenv import load_dotenv
 from helper.note_engine import note_engine
 from llama_index.tools import QueryEngineTool, ToolMetadata
 from llama_index.agent import ReActAgent
 from llama_index.llms import OpenAI
-from helper.pdf import jeff_resume_engine
+from helper.pdf import pdf_engine_generator
+from helper.csv import csv_engine_generator
+from helper.prompts import context
 
 load_dotenv()
 
-# population_path = os.path.join("data", "population.csv")
-# population_df = pd.read_csv(population_path)
+# Add more engines here
+jeff_resume_engine = pdf_engine_generator("jefferson.pdf", "jefferson")
+data_scientist_population_engine = csv_engine_generator("data_scientist_population.csv", "data_scientist_population")
 
-# population_query_engine = PandasQueryEngine(
-#     df=population_df, verbose=True, instruction_str=instruction_str
-# )
-# population_query_engine.update_prompts({"pandas_prompt": new_prompt})
 
 tools = [
     note_engine,
-    # QueryEngineTool(
-    #     query_engine=population_query_engine,
-    #     metadata=ToolMetadata(
-    #         name="population_data",
-    #         description="this gives information at the world population and demographics",
-    #     ),
-    # ),
+    # And add in the toolkit here
+    QueryEngineTool(
+        query_engine=data_scientist_population_engine,
+        metadata=ToolMetadata(
+            name="ds_salary_data",
+            description="this gives information at the salary for Data Scientists",
+        ),
+    ),
     QueryEngineTool(
         query_engine=jeff_resume_engine,
         metadata=ToolMetadata(
